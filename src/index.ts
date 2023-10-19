@@ -1,7 +1,5 @@
-import {app} from './app';
-import {server} from './config';
-import {logger} from './utils/logger';
+import {App} from './app';
+import {router as pingPong} from './ping';
 
-app.listen(server.port, () => {
-  logger.info('app is running ' + server.port);
-});
+const app = new App([pingPong]);
+app.listen();
