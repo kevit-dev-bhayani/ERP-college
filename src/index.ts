@@ -1,5 +1,6 @@
 import {App} from './app';
-import {router as pingPong} from './ping';
+import {router as pingPongRouter} from './ping';
+import {router as userRouter} from './modules/user.routes';
 
-const app = new App([pingPong]);
+const app = new App([pingPongRouter, userRouter]);
 app.listen();
