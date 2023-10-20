@@ -11,10 +11,7 @@ export interface IUser extends Document {
   authToken: string;
 }
 
-// export const UserSchema = new mongoose.Schema({
-//     name: {type:String, required: true},
-//     somethingElse: Number,
-//   });
-
-//   const User = mongoose.model<IUser>('User', UserSchema);
-//   export default User;
+export interface IError {
+  success: string;
+  error: string;
+}
