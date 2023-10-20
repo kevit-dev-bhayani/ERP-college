@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import {Application, Router} from 'express';
 import {server, mongoConfig} from './config';
 import {logger} from './utils/logger';
+import {errorHandler} from './middlewares/error-handler';
+
 export class App {
   public app: Application;
   public routers: Router[];
@@ -11,7 +13,6 @@ export class App {
   constructor(routers: Router[]) {
     this.routers = routers;
     this.app = express();
-
     this.mongooseSetup();
     this.initializeMiddlewares();
     this.initializeRoute();
@@ -25,6 +26,7 @@ export class App {
     this.routers.forEach((router) => {
       this.app.use('/', router);
     });
+    this.app.use(errorHandler);
   }
 
   listen() {
