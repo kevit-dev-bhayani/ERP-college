@@ -10,19 +10,26 @@ export class App {
 
   constructor(routers: Router[]) {
     this.routers = routers;
-    // this.listen();
     this.app = express();
-    this.initializeRoute();
+
     this.mongooseSetup();
+    this.initializeMiddlewares();
+    this.initializeRoute();
   }
-  listen() {
-    this.app.listen(server.port, () => {
-      logger.info(`app is running on port ${server.port}`);
-    });
+
+  initializeMiddlewares() {
+    this.app.use(express.json());
   }
+
   initializeRoute() {
     this.routers.forEach((router) => {
       this.app.use('/', router);
+    });
+  }
+
+  listen() {
+    this.app.listen(server.port, () => {
+      logger.info(`app is running on port ${server.port}`);
     });
   }
 
