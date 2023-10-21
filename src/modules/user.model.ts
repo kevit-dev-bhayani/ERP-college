@@ -1,4 +1,5 @@
 import {Schema, model} from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new Schema({
   name: {
@@ -29,10 +30,21 @@ const userSchema = new Schema({
   department: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Department'
+    ref: ''
   },
   authToken: {
     type: Schema.Types.String
+  }
+});
+
+userSchema.pre('save', async function (next) {
+  try {
+    if (this.isModified('password')) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+    next();
+  } catch (err) {
+    throw err;
   }
 });
 
