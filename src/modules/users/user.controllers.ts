@@ -5,7 +5,7 @@ import fs from 'fs';
 import {join} from 'path';
 
 import {getUsers, createNewUser, findUserById, findUserByEmail, findAndDeleteUser} from './user.services';
-import {newError} from '../utils/error';
+import {newError} from '../../utils/error';
 
 /**
  * get all users
@@ -98,9 +98,12 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       throw newError(500, 'PLEASE ENTER EMAIL AND PASSWORD');
     }
     const user = await findUserByEmail(req.body.email);
+    if (!user) {
+      throw newError(404, 'EMAIL NOT VALID');
+    }
     const check = await bcrypt.compare(req.body.password, user.password);
     if (check) {
-      const privateKey = fs.readFileSync(join(__dirname, '../../keys/private.key'));
+      const privateKey = fs.readFileSync(join(__dirname, '../../../keys/private.key'));
       const authToken = jwt.sign({id: user._id, email: user.email}, privateKey, {algorithm: 'RS256'});
       user.authToken = authToken;
       await user.save();

@@ -1,7 +1,7 @@
 import {User} from './user.model';
-import {logger} from '../utils/logger';
-import {IUser} from '../interfaces';
-import {newError} from '../utils/error';
+import {logger} from '../../utils/logger';
+import {IUser} from '../../interfaces';
+import {newError} from '../../utils/error';
 
 /**
  * List all Users from DataBase
