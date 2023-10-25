@@ -51,6 +51,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findUserById(req.params.id);
+    if (!user) {
+      throw newError(404, 'NO USER FOUND');
+    }
     return res.status(200).json({success: true, data: user});
   } catch (error) {
     next(error);
@@ -68,12 +71,18 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   try {
     const user = await findUserById(req.params.id);
 
+    if (!user) {
+      throw newError(404, 'NO USER FOUND');
+    }
+
     for (const property in req.body) {
       user[property] = req.body[property];
     }
     await user.save();
     return res.status(200).send({success: true, data: user});
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**
@@ -113,6 +122,9 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 export const logoutUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findUserById(req.params.id);
+    if (!user) {
+      throw newError(404, 'NO USER FOUND');
+    }
     user.authToken = undefined;
     user.save();
     return res.status(200).json({success: true, data: user});
