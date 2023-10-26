@@ -87,7 +87,7 @@ export const getById = async (req: Request, res: Response, next: NextFunction): 
 };
 
 /**
- * Update User By Id
+ * Update self
  * @param {Request} req => Express Request
  * @param {Response} res => Express Response
  * @param {NextFunction} next => Express next function
@@ -97,6 +97,32 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   try {
     const {_id, role} = req['data'];
     const user = await findUserById(_id);
+
+    if (!user) {
+      throw newError(404, 'NO USER FOUND');
+    }
+    if (req.body.password) {
+      user['password'] = req.body['password'];
+    } else {
+      throw newError(404, 'ONLY UPDATE PASSWORD');
+    }
+    await user.save();
+    return res.status(200).send({success: true, data: user});
+  } catch (error) {
+    logger.error(`Error while updating a user: ${error}`);
+    next(error);
+  }
+};
+/**
+ * Update User By Id
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ */
+
+export const updateUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const user = await findUserById(req.params.id);
 
     if (!user) {
       throw newError(404, 'NO USER FOUND');

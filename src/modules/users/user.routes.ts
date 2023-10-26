@@ -8,6 +8,7 @@ import {
   getUser,
   getById,
   updateUser,
+  updateUserById,
   loginUser,
   logoutUser,
   deleteUser
@@ -29,8 +30,11 @@ router.get(`/${route}/me`, authenticate, getUser);
 // get user by id
 router.get(`/${route}/:id`, authenticate, authorize(['ADMIN']), getById);
 
-//update User by id
-router.patch(`/${route}/update/me`, authenticate, authorize(['ADMIN']), updateUser);
+//update self
+router.patch(`/${route}/update/me`, authenticate, authorize(['STAFF', 'ADMIN']), updateUser);
+
+//update user by id
+router.patch(`/${route}/update/:id`, authenticate, authorize(['ADMIN']), updateUserById);
 
 //login user
 router.post(`/${route}/login`, loginUser);
