@@ -148,9 +148,6 @@ export const updateUserById = async (req: Request, res: Response, next: NextFunc
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    if (!req.body.email || !req.body.password) {
-      throw newError(500, 'PLEASE ENTER EMAIL AND PASSWORD');
-    }
     const user = await findUserByEmail(req.body.email);
     if (!user) {
       throw newError(404, 'EMAIL NOT VALID');
