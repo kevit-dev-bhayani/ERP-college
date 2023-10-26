@@ -8,7 +8,6 @@ export const authorize = (roles: string[]) => {
       // res.status(403).send('forbidden');
       logger.error(`Error while authorizing User`);
       throw newError(403, 'UNAUTHORIZE');
-      return;
     }
     next();
   };

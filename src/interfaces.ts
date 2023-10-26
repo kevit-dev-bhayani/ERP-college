@@ -12,10 +12,6 @@ export interface IUser extends Document {
   authToken: string;
 }
 
-export interface IError {
-  success: string;
-  error: string;
-}
 export enum Roles {
   ADMIN = 'ADMIN',
   STUDENT = 'STUDENT',

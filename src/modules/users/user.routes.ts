@@ -25,7 +25,7 @@ router.get(`/${route}`, authenticate, authorize(['ADMIN']), getAllUsers);
 router.post(`/${route}/signup`, authenticate, authorize(['ADMIN']), createUser);
 
 //get self
-router.get(`/${route}/me`, authenticate, getUser);
+router.get(`/${route}/me`, authenticate, authorize(['ADMIN', 'STAFF']), getUser);
 
 // get user by id
 router.get(`/${route}/:id`, authenticate, authorize(['ADMIN']), getById);
