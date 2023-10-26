@@ -1,26 +1,42 @@
 import {Router} from 'express';
-import {getAllUsers, createUser, getUser, updateUser, loginUser, logoutUser, deleteUser} from './user.controllers';
+
+import {authenticate} from '../../middlewares/authenticate';
+import {authorize} from '../../middlewares/authorize';
+import {
+  getAllUsers,
+  createUser,
+  getUser,
+  getById,
+  updateUser,
+  loginUser,
+  logoutUser,
+  deleteUser
+} from './user.controllers';
+import {Roles} from '../../interfaces';
 
 const route = 'users';
 export const router = Router();
 
 //List all users
-router.get(`/${route}`, getAllUsers);
+router.get(`/${route}`, authenticate, authorize(['ADMIN']), getAllUsers);
 
 //signup
-router.post(`/${route}/signup`, createUser);
+router.post(`/${route}/signup`, authenticate, authorize(['ADMIN']), createUser);
 
-//get user by id
-router.get(`/${route}/:id`, getUser);
+//get self
+router.get(`/${route}/me`, authenticate, getUser);
+
+// get user by id
+router.get(`/${route}/:id`, authenticate, authorize(['ADMIN']), getById);
 
 //update User by id
-router.patch(`/${route}/update/:id`, updateUser);
+router.patch(`/${route}/update/me`, authenticate, authorize(['ADMIN']), updateUser);
 
 //login user
 router.post(`/${route}/login`, loginUser);
 
 //logout user
-router.patch(`/${route}/logout/:id`, logoutUser);
+router.patch(`/${route}/logout/me`, authenticate, logoutUser);
 
 //delete User
-router.delete(`/${route}/delete/:id`, deleteUser);
+router.delete(`/${route}/delete/:id`, authenticate, authorize(['ADMIN']), deleteUser);

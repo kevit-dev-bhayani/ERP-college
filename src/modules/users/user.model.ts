@@ -1,13 +1,17 @@
 import {Schema, model} from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import {join} from 'path';
+import {Roles} from '../../interfaces';
 
 const userSchema = new Schema({
   name: {
     type: Schema.Types.String,
     required: true
   },
-  isAdmin: {
-    type: Schema.Types.Boolean,
+  role: {
+    type: Schema.Types.String,
     required: true
   },
   designation: {
@@ -41,6 +45,18 @@ userSchema.pre('save', async function (next) {
   try {
     if (this.isModified('password')) {
       this.password = await bcrypt.hash(this.password, 10);
+    }
+    switch (this.role) {
+      case 'ADMIN':
+        this.role = Roles.ADMIN;
+        break;
+
+      case 'STAFF':
+        this.role = Roles.STAFF;
+        break;
+
+      default:
+        break;
     }
     next();
   } catch (err) {

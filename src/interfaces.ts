@@ -1,8 +1,9 @@
 import {Document} from 'mongoose';
 
 export interface IUser extends Document {
+  generateAuthToken(_id: any, role: Roles): unknown;
   name: string;
-  isAdmin: boolean;
+  role: Roles;
   designation: string;
   email: string;
   mobile: number;
@@ -14,4 +15,9 @@ export interface IUser extends Document {
 export interface IError {
   success: string;
   error: string;
+}
+export enum Roles {
+  ADMIN = 'ADMIN',
+  STUDENT = 'STUDENT',
+  STAFF = 'STAFF'
 }
