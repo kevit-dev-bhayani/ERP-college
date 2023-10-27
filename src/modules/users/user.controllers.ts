@@ -150,17 +150,17 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   try {
     const user = await findUserByEmail(req.body.email);
     if (!user) {
-      throw newError(404, 'EMAIL NOT VALID');
+      throw newError(401, 'Invalid credentials');
     }
-    const check = await bcrypt.compare(req.body.password, user.password);
-    if (check) {
+    const match = await bcrypt.compare(req.body.password, user.password);
+    if (match) {
       const privateKey = fs.readFileSync(join(__dirname, '../../../keys/private.key'));
       const authToken = jwt.sign({_id: user._id, role: user.role}, privateKey, {algorithm: 'RS256'});
       user.authToken = authToken;
       await user.save();
       return res.status(200).json({success: true, data: {user}});
     }
-    throw newError(401, 'Invalid Id or Password');
+    throw newError(401, 'Invalid credentials');
   } catch (error) {
     logger.error(`Error while login a user: ${error}`);
     next(error);
@@ -201,7 +201,7 @@ export const logoutUser = async (req: Request, res: Response, next: NextFunction
 export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findAndDeleteUser(req.params.id);
-    return res.status(200).json({success: true, data: user});
+    return res.status(200).json({success: true, data: user || 'User not found!'});
   } catch (error) {
     logger.error(`Error while deleting a user: ${error}`);
     next(error);
