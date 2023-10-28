@@ -30,6 +30,10 @@ const studentSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true
   },
+  sem: {
+    type: Number,
+    required: true
+  },
   batch: {
     type: Number,
     required: true
