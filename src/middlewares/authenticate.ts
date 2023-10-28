@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import {join} from 'path';
 import fs from 'fs';
 import {findUserById} from '../modules/users/user.services';
+import {findStudentById} from '../modules/students/student.services';
 import {Request, Response, NextFunction, json} from 'express';
 import {newError} from '../utils/error';
 import {logger} from '../utils/logger';
@@ -21,8 +22,8 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
   try {
     const privateKey = fs.readFileSync(join(__dirname, '../../keys/private.key'));
     const {_id, role} = jwt.verify(token, privateKey);
-    const user = await findUserById(_id);
-    if (token !== user.authToken) {
+    const person = role === 'STUDENT' ? await findStudentById(_id) : await findUserById(_id);
+    if (token !== person.authToken) {
       throw 'UNAUTHENTICATED';
     }
 
