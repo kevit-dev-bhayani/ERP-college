@@ -1,7 +1,6 @@
 import {Document} from 'mongoose';
 
 export interface IUser extends Document {
-  generateAuthToken(_id: any, role: Roles): unknown;
   name: string;
   role: Roles;
   designation: string;
@@ -13,7 +12,6 @@ export interface IUser extends Document {
 }
 
 export interface IStudent extends Document {
-  generateAuthToken(_id: any, role: Roles): unknown;
   name: string;
   role: Roles;
   batch: number;
@@ -23,6 +21,11 @@ export interface IStudent extends Document {
   sem: number;
   department: string;
   authToken: string;
+}
+
+export interface IDepartment extends Document {
+  name: string;
+  initial: string;
 }
 
 export enum Roles {

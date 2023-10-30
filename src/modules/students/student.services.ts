@@ -5,7 +5,7 @@ import {IStudent} from '../../interfaces';
 
 /**
  * list all student
- * @returns
+ * @returns Promise<IStudent[]>
  */
 export const findStudents = async (): Promise<IStudent[]> => {
   try {
@@ -16,6 +16,11 @@ export const findStudents = async (): Promise<IStudent[]> => {
   }
 };
 
+/**
+ * create new student
+ * @params studentObj => obj of student to be created
+ * @returns Promise<IStudent[]>
+ */
 export const createStudent = async (studentObj: object): Promise<object> => {
   try {
     return await Student.create(studentObj);
@@ -26,8 +31,9 @@ export const createStudent = async (studentObj: object): Promise<object> => {
 };
 
 /**
+ * find student by id
  * @param _id => id of student
- * @returns
+ * @returns  Promise<IStudent>
  */
 export const findStudentById = async (_id: string): Promise<IStudent> => {
   try {
@@ -38,6 +44,11 @@ export const findStudentById = async (_id: string): Promise<IStudent> => {
   }
 };
 
+/**
+ * find student by email
+ * @param email => email of student
+ * @returns  Promise<IStudent>
+ */
 export const findByEmail = async (email: string): Promise<IStudent> => {
   try {
     return await Student.findOne({email});
@@ -47,6 +58,11 @@ export const findByEmail = async (email: string): Promise<IStudent> => {
   }
 };
 
+/**
+ * delete student by id
+ * @param _id => id of student
+ * @returns  Promise<IStudent>
+ */
 export const deleteById = async (_id: string) => {
   try {
     return await Student.findByIdAndDelete(_id);
