@@ -12,6 +12,19 @@ export interface IUser extends Document {
   authToken: string;
 }
 
+export interface IStudent extends Document {
+  generateAuthToken(_id: any, role: Roles): unknown;
+  name: string;
+  role: Roles;
+  batch: number;
+  email: string;
+  mobile: number;
+  password: string;
+  sem: number;
+  department: string;
+  authToken: string;
+}
+
 export enum Roles {
   ADMIN = 'ADMIN',
   STUDENT = 'STUDENT',

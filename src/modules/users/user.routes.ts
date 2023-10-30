@@ -40,7 +40,7 @@ router.patch(`/${route}/update/:id`, authenticate, authorize(['ADMIN']), updateU
 router.post(`/${route}/login`, loginUser);
 
 //logout user
-router.patch(`/${route}/logout/me`, authenticate, logoutUser);
+router.patch(`/${route}/logout/me`, authenticate, authorize(['STAFF', 'ADMIN']), logoutUser);
 
 //delete User
 router.delete(`/${route}/delete/:id`, authenticate, authorize(['ADMIN']), deleteUser);

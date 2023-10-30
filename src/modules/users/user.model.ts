@@ -1,8 +1,6 @@
 import {Schema, model} from 'mongoose';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import {join} from 'path';
+
 import {Roles} from '../../interfaces';
 
 const userSchema = new Schema({
