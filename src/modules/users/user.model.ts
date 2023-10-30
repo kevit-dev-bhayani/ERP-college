@@ -32,7 +32,7 @@ const userSchema = new Schema({
   department: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: ''
+    ref: 'Department'
   },
   authToken: {
     type: Schema.Types.String

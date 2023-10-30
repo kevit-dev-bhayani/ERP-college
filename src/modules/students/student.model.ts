@@ -28,7 +28,8 @@ const studentSchema = new Schema({
   },
   department: {
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'Department'
   },
   sem: {
     type: Number,

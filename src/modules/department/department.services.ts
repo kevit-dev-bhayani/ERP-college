@@ -61,13 +61,13 @@ export const createDepartment = async (department: object): Promise<object> => {
 };
 
 /**
- * delete department by initial
+ * delete department by id
  * @params initial => initial of department to be create
  * @returns IDepartment
  */
-export const deleteByInitial = async (initial): Promise<IDepartment> => {
+export const deleteByInitial = async (_id): Promise<IDepartment> => {
   try {
-    return await Department.findOneAndDelete({initial});
+    return await Department.findOneAndDelete({_id});
   } catch (error) {
     logger.error(`Error while deleting department - ${error}`);
     throw newError(500, error);

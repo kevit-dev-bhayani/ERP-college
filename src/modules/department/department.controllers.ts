@@ -54,32 +54,15 @@ export const findDepartmentById = async (req: Request, res: Response, next: Next
 };
 
 /**
- * find department by init
+ * update department by id
  * @param {Request} req => Express Request
  * @param {Response} res => Express Response
  * @param {NextFunction} next => Express next function
  * @returns {Promise<Response>} => promise with response
  */
-export const findByInit = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+export const updateById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const department = await findByDeptInit(req.params.init);
-    return res.status(200).json({success: true, data: department});
-  } catch (error) {
-    logger.error(`Error while finding department by id - ${error}`);
-    next(error);
-  }
-};
-
-/**
- * update department by init
- * @param {Request} req => Express Request
- * @param {Response} res => Express Response
- * @param {NextFunction} next => Express next function
- * @returns {Promise<Response>} => promise with response
- */
-export const updateByInit = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
-  try {
-    const department = await findByDeptInit(req.params.init);
+    const department = await findByDeptInit(req.params.id);
     logger.info(req.body);
     for (const property in req.body) {
       department[property] = req.body[property];
@@ -101,7 +84,7 @@ export const updateByInit = async (req: Request, res: Response, next: NextFuncti
  */
 export const deleteDepartment = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const department = await deleteByInitial(req.params.init);
+    const department = await deleteByInitial(req.params.id);
     return res.status(200).json({success: true, data: department});
   } catch (error) {
     logger.error(`Error while finding department by id - ${error}`);
