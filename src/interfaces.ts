@@ -20,6 +20,7 @@ export interface IStudent extends Document {
   email: string;
   mobile: number;
   password: string;
+  sem: number;
   department: string;
   authToken: string;
 }
