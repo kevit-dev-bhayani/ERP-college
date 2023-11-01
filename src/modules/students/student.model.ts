@@ -2,7 +2,6 @@ import {NextFunction} from 'express';
 import bcrypt from 'bcryptjs';
 import {Schema, model} from 'mongoose';
 import {Roles} from '../../interfaces';
-import {newError} from '../../utils/error';
 
 const studentSchema = new Schema({
   name: {
@@ -11,7 +10,7 @@ const studentSchema = new Schema({
   },
   role: {
     type: String,
-    required: true
+    default: Roles.STUDENT
   },
   email: {
     type: String,
@@ -28,7 +27,8 @@ const studentSchema = new Schema({
   },
   department: {
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'Department'
   },
   sem: {
     type: Number,
@@ -56,4 +56,5 @@ studentSchema.pre('save', async function (next: NextFunction) {
     next(error);
   }
 });
+
 export const Student = model('Student', studentSchema);

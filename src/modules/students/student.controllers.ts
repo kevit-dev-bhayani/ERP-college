@@ -5,8 +5,10 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
 import {logger} from '../../utils/logger';
-import {findStudents, findStudentById, createStudent, findByEmail, deleteById} from './student.services';
+import {findStudents, findStudentById, createStudent, findByEmail, deleteById, checkBatch} from './student.services';
+import {incrementOccupied, decrementOccupied, findById} from '../department/department.services';
 import {newError} from '../../utils/error';
+import {validationResult} from 'express-validator';
 
 /**
  * get all students
@@ -34,7 +36,11 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
  */
 export const newStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
+    const dept_id = req.body.department;
+    await checkBatch(dept_id, req.body.batch);
+
     const student = await createStudent(req.body);
+    await incrementOccupied(dept_id);
     return res.status(201).json({success: true, data: student});
   } catch (error) {
     logger.error(`Error while creating student - ${error}`);
@@ -86,14 +92,26 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction): 
  */
 export const updateStudentById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // return res.json({errors: errors.array()});
+      throw newError(400, errors.array());
+    }
     const student = await findStudentById(req.params.id);
-
-    for (const property in req.body) {
-      if (property !== 'role') {
-        student[property] = req.body[property];
+    const fields = Object.keys(req.body);
+    if (fields.includes('batch') || fields.includes('department')) {
+      if (fields.includes('batch') && !fields.includes('department')) {
+        throw newError(400, 'PLEASE UPDATE DEPARTMENT WITH BATCH');
+      } else if (fields.includes('department') && !fields.includes('batch')) {
+        throw newError(400, 'PLEASE UPDATE BATCH WITH DEPARTMENT');
       } else {
-        throw newError(500, `CAN'T UPDATE ROLE`);
+        await checkBatch(req.body.department, req.body.batch);
+        await decrementOccupied(student.department);
+        await incrementOccupied(req.body.department);
       }
+    }
+    for (const property in req.body) {
+      student[property] = req.body[property];
     }
     await student.save();
     return res.status(200).json({success: true, data: student});
@@ -112,14 +130,15 @@ export const updateStudentById = async (req: Request, res: Response, next: NextF
  */
 export const updateSelf = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw newError(400, errors.array());
+    }
+
     const {_id} = req['data'];
     const student = await findStudentById(_id);
+    student['password'] = req.body['password'];
 
-    if (req.body.password) {
-      student['password'] = req.body['password'];
-    } else {
-      throw newError(404, 'ONLY UPDATE PASSWORD');
-    }
     await student.save();
     return res.status(200).json({success: true, data: student});
   } catch (error) {
@@ -130,8 +149,13 @@ export const updateSelf = async (req: Request, res: Response, next: NextFunction
 
 export const loginStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw newError(400, errors.array());
+    }
+
     const student = await findByEmail(req.body.email);
-    const match = await bcrypt.compare(req.body.password, student.password);
+    const match = await bcrypt.compare(req.body.password, student?.password);
     if (match) {
       const privateKey = fs.readFileSync(join(__dirname, '../../../keys/private.key'));
       student.authToken = jwt.sign({_id: student._id, role: student.role}, privateKey, {algorithm: 'RS256'});
@@ -175,6 +199,8 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
 export const deleteStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const student = await deleteById(req.params.id);
+    const dept_id = student.department.toString();
+    decrementOccupied(dept_id);
     return res.status(200).json({success: true, data: student});
   } catch (error) {
     logger.error(`Error while deleting student - ${error}`);

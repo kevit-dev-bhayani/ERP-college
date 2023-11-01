@@ -13,7 +13,7 @@ import {
   logoutUser,
   deleteUser
 } from './user.controllers';
-import {Roles} from '../../interfaces';
+import {validateLogin} from '../../middlewares/validator';
 
 const route = 'users';
 export const router = Router();
@@ -37,7 +37,7 @@ router.patch(`/${route}/update/me`, authenticate, authorize(['STAFF', 'ADMIN']),
 router.patch(`/${route}/update/:id`, authenticate, authorize(['ADMIN']), updateUserById);
 
 //login user
-router.post(`/${route}/login`, loginUser);
+router.post(`/${route}/login`, validateLogin(), loginUser);
 
 //logout user
 router.patch(`/${route}/logout/me`, authenticate, authorize(['STAFF', 'ADMIN']), logoutUser);
