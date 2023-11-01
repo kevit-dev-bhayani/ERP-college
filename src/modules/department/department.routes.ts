@@ -23,5 +23,5 @@ router.get(`/${Route}/id/:id`, authenticate, authorize(['ADMIN']), findDepartmen
 //update department by id
 router.patch(`/${Route}/update/:id`, authenticate, authorize(['ADMIN']), updateById);
 
-//delete department by initial
+//delete department by id
 router.delete(`/${Route}/delete/:id`, authenticate, authorize(['ADMIN']), deleteDepartment);
