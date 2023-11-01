@@ -2,7 +2,6 @@ import {NextFunction} from 'express';
 import bcrypt from 'bcryptjs';
 import {Schema, model} from 'mongoose';
 import {Roles} from '../../interfaces';
-import {newError} from '../../utils/error';
 
 const studentSchema = new Schema({
   name: {

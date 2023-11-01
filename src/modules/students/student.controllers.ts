@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
 import {logger} from '../../utils/logger';
-import {findStudents, findStudentById, createStudent, findByEmail, deleteById} from './student.services';
+import {findStudents, findStudentById, createStudent, findByEmail, deleteById, checkBatch} from './student.services';
 import {incrementOccupied, decrementOccupied, findById} from '../department/department.services';
 import {newError} from '../../utils/error';
 import {validationResult} from 'express-validator';
@@ -37,10 +37,8 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
 export const newStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const dept_id = req.body.department;
-    const department = await findById(dept_id);
-    if (department.occupiedSeats === department.TotalSeats) {
-      throw newError(500, 'department is full');
-    }
+    await checkBatch(dept_id, req.body.batch);
+
     const student = await createStudent(req.body);
     await incrementOccupied(dept_id);
     return res.status(201).json({success: true, data: student});
@@ -100,7 +98,18 @@ export const updateStudentById = async (req: Request, res: Response, next: NextF
       throw newError(400, errors.array());
     }
     const student = await findStudentById(req.params.id);
-
+    const fields = Object.keys(req.body);
+    if (fields.includes('batch') || fields.includes('department')) {
+      if (fields.includes('batch') && !fields.includes('department')) {
+        throw newError(400, 'PLEASE UPDATE DEPARTMENT WITH BATCH');
+      } else if (fields.includes('department') && !fields.includes('batch')) {
+        throw newError(400, 'PLEASE UPDATE BATCH WITH DEPARTMENT');
+      } else {
+        await checkBatch(req.body.department, req.body.batch);
+        await decrementOccupied(student.department);
+        await incrementOccupied(req.body.department);
+      }
+    }
     for (const property in req.body) {
       student[property] = req.body[property];
     }

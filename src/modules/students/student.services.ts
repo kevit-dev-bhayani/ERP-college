@@ -2,6 +2,7 @@ import {logger} from '../../utils/logger';
 import {Student} from './student.model';
 import {newError} from '../../utils/error';
 import {IStudent} from '../../interfaces';
+import {findById} from '../department/department.services';
 
 /**
  * list all student
@@ -68,6 +69,26 @@ export const deleteById = async (_id: string) => {
     return await Student.findByIdAndDelete(_id);
   } catch (error) {
     logger.error(`error while deleting student by id - ${error}`);
+    throw newError(500, error);
+  }
+};
+
+/**
+ * check batch
+ * @param _id => id of student
+ */
+
+export const checkBatch = async (_id: string, batch: number): Promise<void> => {
+  try {
+    const department = await findById(_id);
+    if (department.batch !== batch) {
+      throw 'BATCH IS NOT VALID FOR THIS DEPARTMENT';
+    }
+    if (department.occupiedSeats === department.TotalSeats) {
+      throw 'department is full';
+    }
+  } catch (error) {
+    logger.error(`error while checking student by id - ${error}`);
     throw newError(500, error);
   }
 };

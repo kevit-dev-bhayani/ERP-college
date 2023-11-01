@@ -28,6 +28,7 @@ export interface IDepartment extends Document {
   initial: string;
   occupiedSeats: number;
   TotalSeats: number;
+  batch: number;
 }
 
 export enum Roles {

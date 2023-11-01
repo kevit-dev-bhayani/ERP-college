@@ -4,8 +4,7 @@ import {Schema, model} from 'mongoose';
 const departmentSchema = new Schema({
   name: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   initial: {
     type: String,
@@ -19,6 +18,10 @@ const departmentSchema = new Schema({
   occupiedSeats: {
     type: Number,
     default: 0
+  },
+  batch: {
+    type: Number,
+    required: true
   }
 });
 
