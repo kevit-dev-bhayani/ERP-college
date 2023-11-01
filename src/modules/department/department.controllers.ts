@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
-import {findDepartments, createDepartment, findById, findByDeptInit, deleteByInitial} from './department.services';
+import {findDepartments, createDepartment, findById, findByDeptInit, deleteById} from './department.services';
 import {logger} from '../../utils/logger';
 
 /**
@@ -84,7 +84,7 @@ export const updateById = async (req: Request, res: Response, next: NextFunction
  */
 export const deleteDepartment = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const department = await deleteByInitial(req.params.id);
+    const department = await deleteById(req.params.id);
     return res.status(200).json({success: true, data: department});
   } catch (error) {
     logger.error(`Error while finding department by id - ${error}`);

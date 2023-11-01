@@ -11,7 +11,7 @@ const studentSchema = new Schema({
   },
   role: {
     type: String,
-    required: true
+    default: Roles.STUDENT
   },
   email: {
     type: String,
@@ -57,4 +57,5 @@ studentSchema.pre('save', async function (next: NextFunction) {
     next(error);
   }
 });
+
 export const Student = model('Student', studentSchema);

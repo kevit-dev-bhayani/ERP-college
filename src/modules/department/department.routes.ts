@@ -20,7 +20,7 @@ router.post(`/${Route}/new`, authenticate, authorize(['ADMIN']), postDepartment)
 //find department by Id
 router.get(`/${Route}/id/:id`, authenticate, authorize(['ADMIN']), findDepartmentById);
 
-//update department by initial
+//update department by id
 router.patch(`/${Route}/update/:id`, authenticate, authorize(['ADMIN']), updateById);
 
 //delete department by initial

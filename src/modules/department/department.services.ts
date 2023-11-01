@@ -2,6 +2,7 @@ import {Department} from './department.model';
 import {IDepartment} from '../../interfaces';
 import {logger} from '../../utils/logger';
 import {newError} from '../../utils/error';
+import {ObjectId} from 'mongoose';
 
 /**
  * Find department by Id
@@ -62,14 +63,49 @@ export const createDepartment = async (department: object): Promise<object> => {
 
 /**
  * delete department by id
- * @params initial => initial of department to be create
+ * @params _id => id of department to be create
  * @returns IDepartment
  */
-export const deleteByInitial = async (_id): Promise<IDepartment> => {
+export const deleteById = async (_id: string): Promise<IDepartment> => {
   try {
     return await Department.findOneAndDelete({_id});
   } catch (error) {
     logger.error(`Error while deleting department - ${error}`);
+    throw newError(500, error);
+  }
+};
+
+/**
+ * incrementing occupied seats in department when new student created
+ * @params _id => id of department of student
+ * @returns nothing
+ */
+export const incrementOccupied = async (_id: string): Promise<void> => {
+  try {
+    const department = await Department.findById(_id);
+    department.occupiedSeats = department.occupiedSeats + 1;
+    department.save();
+  } catch (error) {
+    logger.error(`Error while incrementing occupied seat in department - ${error}`);
+    throw newError(500, error);
+  }
+};
+
+/**
+ * decrementing occupied seats in department when new student created
+ * @params _id => id of department of student
+ * @returns nothing
+ */
+export const decrementOccupied = async (_id: string): Promise<void> => {
+  try {
+    const department = await Department.findById(_id);
+    department.occupiedSeats--;
+    if (department.occupiedSeats < 0) {
+      throw 'no students in this department';
+    }
+    department.save();
+  } catch (error) {
+    logger.error(`Error while decrementing occupied seat in department - ${error}`);
     throw newError(500, error);
   }
 };

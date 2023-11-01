@@ -26,6 +26,8 @@ export interface IStudent extends Document {
 export interface IDepartment extends Document {
   name: string;
   initial: string;
+  occupiedSeats: number;
+  TotalSeats: number;
 }
 
 export enum Roles {
