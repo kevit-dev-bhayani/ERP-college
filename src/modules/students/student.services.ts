@@ -66,7 +66,7 @@ export const findByEmail = async (email: string): Promise<IStudent> => {
  */
 export const deleteById = async (_id: string) => {
   try {
-    return await Student.findByIdAndDelete(_id);
+    return await Student.findOneAndDelete({_id});
   } catch (error) {
     logger.error(`error while deleting student by id - ${error}`);
     throw newError(500, error);
@@ -81,9 +81,6 @@ export const deleteById = async (_id: string) => {
 export const checkBatch = async (_id: string, batch: number): Promise<void> => {
   try {
     const department = await findById(_id);
-    if (department.batch !== batch) {
-      throw 'BATCH IS NOT VALID FOR THIS DEPARTMENT';
-    }
     if (department.occupiedSeats === department.TotalSeats) {
       throw 'department is full';
     }

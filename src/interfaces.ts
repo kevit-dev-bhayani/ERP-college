@@ -14,7 +14,6 @@ export interface IUser extends Document {
 export interface IStudent extends Document {
   name: string;
   role: Roles;
-  batch: number;
   email: string;
   mobile: number;
   password: string;
@@ -29,6 +28,12 @@ export interface IDepartment extends Document {
   occupiedSeats: number;
   TotalSeats: number;
   batch: number;
+}
+
+export interface IAttendance extends Document {
+  student: string;
+  date: Date;
+  isPresent: boolean;
 }
 
 export enum Roles {

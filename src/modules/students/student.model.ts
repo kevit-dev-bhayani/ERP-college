@@ -2,6 +2,7 @@ import {NextFunction} from 'express';
 import bcrypt from 'bcryptjs';
 import {Schema, model} from 'mongoose';
 import {Roles} from '../../interfaces';
+import {Attendance} from '../attendance/attendance.model';
 
 const studentSchema = new Schema({
   name: {
@@ -34,10 +35,6 @@ const studentSchema = new Schema({
     type: Number,
     required: true
   },
-  batch: {
-    type: Number,
-    required: true
-  },
   authToken: {
     type: String
   }
@@ -55,6 +52,10 @@ studentSchema.pre('save', async function (next: NextFunction) {
   } catch (error) {
     next(error);
   }
+});
+
+studentSchema.post('findOneAndDelete', async (student) => {
+  await Attendance.deleteMany({student: student._id});
 });
 
 export const Student = model('Student', studentSchema);

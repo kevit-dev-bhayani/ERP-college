@@ -99,17 +99,13 @@ export const updateStudentById = async (req: Request, res: Response, next: NextF
     }
     const student = await findStudentById(req.params.id);
     const fields = Object.keys(req.body);
-    if (fields.includes('batch') || fields.includes('department')) {
-      if (fields.includes('batch') && !fields.includes('department')) {
-        throw newError(400, 'PLEASE UPDATE DEPARTMENT WITH BATCH');
-      } else if (fields.includes('department') && !fields.includes('batch')) {
-        throw newError(400, 'PLEASE UPDATE BATCH WITH DEPARTMENT');
-      } else {
-        await checkBatch(req.body.department, req.body.batch);
-        await decrementOccupied(student.department);
-        await incrementOccupied(req.body.department);
-      }
+
+    if (fields.includes('department')) {
+      await checkBatch(req.body.department, req.body.batch);
+      await decrementOccupied(student.department);
+      await incrementOccupied(req.body.department);
     }
+
     for (const property in req.body) {
       student[property] = req.body[property];
     }
