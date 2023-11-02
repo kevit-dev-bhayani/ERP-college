@@ -10,6 +10,7 @@ import {findById} from '../department/department.services';
  */
 export const findStudents = async (): Promise<IStudent[]> => {
   try {
+    // logger.warn('hello' + (await Student.find()));
     return await Student.find();
   } catch (error) {
     logger.error(`error while finding student by id - ${error}`);
