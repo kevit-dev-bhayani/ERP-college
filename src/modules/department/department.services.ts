@@ -109,3 +109,78 @@ export const decrementOccupied = async (_id: string): Promise<void> => {
     throw newError(500, error);
   }
 };
+
+/**
+ *  [{
+  "_id": 2020,
+  "totalStudents": 6,
+  "Year": 2020,
+  "branches": {
+    "Computer Engineering": 2,
+    "Information & Technology": 2,
+    "Electrical Engineering": 2
+  }
+},
+{
+  "_id": 2021,
+  "totalStudents": 7,
+  "Year": 2021,
+  "branches": {
+    "Computer Engineering": 2,
+    "Information & Technology": 3,
+    "Electrical Engineering": 2
+  }
+}]
+ * data in this form
+ * @returns array of batches
+ * 
+ */
+
+export const firstAgg = async (): Promise<object[]> => {
+  try {
+    const pipeline = [
+      {
+        $group: {
+          _id: '$batch',
+          totalStudents: {
+            $sum: '$occupiedSeats'
+          },
+          Branches: {
+            $push: {
+              name: '$name',
+              occupiedSeats: '$occupiedSeats'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          Branch: {
+            $map: {
+              input: '$Branches',
+              as: 'branch',
+              in: {
+                k: '$$branch.name',
+                v: '$$branch.occupiedSeats'
+              }
+            }
+          },
+          totalStudents: 1
+        }
+      },
+      {
+        $project: {
+          Year: '$_id',
+          branches: {
+            $arrayToObject: '$Branch'
+          },
+          totalStudents: 1
+        }
+      }
+    ];
+    return await Department.aggregate(pipeline);
+  } catch (error) {
+    logger.error(`Error while first pipeline execution in department - ${error}`);
+    throw newError(500, error);
+  }
+};

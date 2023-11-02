@@ -4,7 +4,8 @@ import {
   postDepartment,
   findDepartmentById,
   updateById,
-  deleteDepartment
+  deleteDepartment,
+  First
 } from './department.controllers';
 import {authenticate} from '../../middlewares/authenticate';
 import {authorize} from '../../middlewares/authorize';
@@ -25,3 +26,6 @@ router.patch(`/${Route}/update/:id`, authenticate, authorize(['ADMIN']), updateB
 
 //delete department by id
 router.delete(`/${Route}/delete/:id`, authenticate, authorize(['ADMIN']), deleteDepartment);
+
+//first aggregation
+router.get(`/first`, authenticate, authorize(['ADMIN']), First);

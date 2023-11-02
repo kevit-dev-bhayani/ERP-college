@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
-import {findDepartments, createDepartment, findById, findByDeptInit, deleteById} from './department.services';
+import {findDepartments, createDepartment, findById, findByDeptInit, deleteById, firstAgg} from './department.services';
 import {logger} from '../../utils/logger';
 
 /**
@@ -88,6 +88,24 @@ export const deleteDepartment = async (req: Request, res: Response, next: NextFu
     return res.status(200).json({success: true, data: department});
   } catch (error) {
     logger.error(`Error while finding department by id - ${error}`);
+    next(error);
+  }
+};
+
+/**
+ * first aggregation for batch and departments
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
+
+export const First = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const batch = await firstAgg();
+    return res.status(200).json({success: true, data: batch});
+  } catch (error) {
+    logger.error(`Error while first aggregation - ${error}`);
     next(error);
   }
 };
