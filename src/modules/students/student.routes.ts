@@ -54,4 +54,4 @@ router.patch(`/${Route}/logout/me`, authenticate, authorize(['STUDENT']), logout
 router.delete(`/${Route}/delete/:id`, authenticate, authorize(['ADMIN', 'STAFF']), deleteStudent);
 
 // second aggregation
-router.post(`/${Route}/second`, authenticate, authorize(['ADMIN', 'STAFF']), findAbsent);
+router.post(`/second`, authenticate, authorize(['ADMIN', 'STAFF']), findAbsent);
