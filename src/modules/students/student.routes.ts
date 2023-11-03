@@ -13,7 +13,8 @@ import {
   loginStudent,
   logout,
   deleteStudent,
-  findAbsent
+  findAbsent,
+  third
 } from './student.controllers';
 import {validateNotPassword, validatePassword, validateLogin} from '../../middlewares/validator';
 
@@ -55,3 +56,6 @@ router.delete(`/${Route}/delete/:id`, authenticate, authorize(['ADMIN', 'STAFF']
 
 // second aggregation
 router.post(`/second`, authenticate, authorize(['ADMIN', 'STAFF']), findAbsent);
+
+// third aggregation
+router.post(`/third`, authenticate, authorize(['ADMIN', 'STAFF']), third);
