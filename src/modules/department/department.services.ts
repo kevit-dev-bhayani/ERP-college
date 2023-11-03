@@ -184,3 +184,93 @@ export const firstAgg = async (): Promise<object[]> => {
     throw newError(500, error);
   }
 };
+
+export const fourthAgg = async (reqObj: {[Index: string]: any}) => {
+  try {
+    const pipeline: any = [
+      {
+        $addFields: {
+          availableIntake: {
+            $subtract: ['$TotalSeats', '$occupiedSeats']
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$batch',
+          TotalStudents: {
+            $sum: '$occupiedSeats'
+          },
+          totalStudentIntake: {
+            $sum: '$TotalSeats'
+          },
+          Branches: {
+            $push: {
+              deptName: '$initial',
+              totalStudents: '$occupiedSeats',
+              TotalStudentIntake: '$TotalSeats',
+              availableIntake: '$availableIntake'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          batch: '$_id',
+          TotalStudents: 1,
+          totalStudentIntake: 1,
+          availableIntake: {
+            $subtract: ['$totalStudentIntake', '$TotalStudents']
+          },
+          Branch: {
+            $map: {
+              input: '$Branches',
+              as: 'branch',
+              in: {
+                k: '$$branch.deptName',
+                v: {
+                  totalStudents: '$$branch.totalStudents',
+                  TotalStudentIntake: '$$branch.TotalStudentIntake',
+                  availableIntake: '$$branch.availableIntake'
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          batch: 1,
+          TotalStudents: 1,
+          totalStudentIntake: 1,
+          availableIntake: 1,
+          Branch: {
+            $arrayToObject: '$Branch'
+          }
+        }
+      }
+    ];
+
+    if (reqObj.batch) {
+      const condition = {
+        $match: {
+          batch: reqObj.batch
+        }
+      };
+      pipeline.unshift(condition);
+    }
+    if (reqObj.branch) {
+      const condition = {
+        $match: {
+          initial: reqObj.branch
+        }
+      };
+      pipeline.unshift(condition);
+    }
+    return await Department.aggregate(pipeline);
+  } catch (error) {
+    logger.error(`Error while fourth pipeline execution in department - ${error}`);
+    throw newError(500, error);
+  }
+};
