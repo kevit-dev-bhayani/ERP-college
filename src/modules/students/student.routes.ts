@@ -12,7 +12,8 @@ import {
   updateStudentById,
   loginStudent,
   logout,
-  deleteStudent
+  deleteStudent,
+  findAbsent
 } from './student.controllers';
 import {validateNotPassword, validatePassword, validateLogin} from '../../middlewares/validator';
 
@@ -51,3 +52,6 @@ router.patch(`/${Route}/logout/me`, authenticate, authorize(['STUDENT']), logout
 
 //delete
 router.delete(`/${Route}/delete/:id`, authenticate, authorize(['ADMIN', 'STAFF']), deleteStudent);
+
+// second aggregation
+router.post(`/${Route}/second`, authenticate, authorize(['ADMIN', 'STAFF']), findAbsent);
