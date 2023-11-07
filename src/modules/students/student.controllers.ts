@@ -5,7 +5,16 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
 import {logger} from '../../utils/logger';
-import {findStudents, findStudentById, createStudent, findByEmail, deleteById, checkBatch} from './student.services';
+import {
+  findStudents,
+  findStudentById,
+  createStudent,
+  findByEmail,
+  deleteById,
+  checkBatch,
+  findAbStudent,
+  thirdAgg
+} from './student.services';
 import {incrementOccupied, decrementOccupied, findById} from '../department/department.services';
 import {newError} from '../../utils/error';
 import {validationResult} from 'express-validator';
@@ -200,6 +209,40 @@ export const deleteStudent = async (req: Request, res: Response, next: NextFunct
     return res.status(200).json({success: true, data: student});
   } catch (error) {
     logger.error(`Error while deleting student - ${error}`);
+    next(error);
+  }
+};
+
+/**
+ * second aggregation
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
+export const findAbsent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const students = await findAbStudent(req.body);
+    return res.status(200).json({success: true, data: students});
+  } catch (error) {
+    logger.error(`Error while Finding absent student on particular date - ${error}`);
+    next(error);
+  }
+};
+
+/**
+ * third aggregation
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
+export const third = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const students = await thirdAgg(req.body);
+    return res.status(200).json({success: true, data: students});
+  } catch (error) {
+    logger.error(`Error while Finding absent student on particular date - ${error}`);
     next(error);
   }
 };

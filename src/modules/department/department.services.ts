@@ -109,3 +109,168 @@ export const decrementOccupied = async (_id: string): Promise<void> => {
     throw newError(500, error);
   }
 };
+
+/**
+ *  [{
+  "_id": 2020,
+  "totalStudents": 6,
+  "Year": 2020,
+  "branches": {
+    "Computer Engineering": 2,
+    "Information & Technology": 2,
+    "Electrical Engineering": 2
+  }
+},
+{
+  "_id": 2021,
+  "totalStudents": 7,
+  "Year": 2021,
+  "branches": {
+    "Computer Engineering": 2,
+    "Information & Technology": 3,
+    "Electrical Engineering": 2
+  }
+}]
+ * data in this form
+ * @returns array of batches
+ * 
+ */
+
+export const firstAgg = async (): Promise<object[]> => {
+  try {
+    const pipeline = [
+      {
+        $group: {
+          _id: '$batch',
+          totalStudents: {
+            $sum: '$occupiedSeats'
+          },
+          Branches: {
+            $push: {
+              name: '$name',
+              occupiedSeats: '$occupiedSeats'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          Branch: {
+            $map: {
+              input: '$Branches',
+              as: 'branch',
+              in: {
+                k: '$$branch.name',
+                v: '$$branch.occupiedSeats'
+              }
+            }
+          },
+          totalStudents: 1
+        }
+      },
+      {
+        $project: {
+          Year: '$_id',
+          branches: {
+            $arrayToObject: '$Branch'
+          },
+          totalStudents: 1
+        }
+      }
+    ];
+    return await Department.aggregate(pipeline);
+  } catch (error) {
+    logger.error(`Error while first pipeline execution in department - ${error}`);
+    throw newError(500, error);
+  }
+};
+
+export const fourthAgg = async (reqObj: {[Index: string]: any}) => {
+  try {
+    const pipeline: any = [
+      {
+        $addFields: {
+          availableIntake: {
+            $subtract: ['$TotalSeats', '$occupiedSeats']
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$batch',
+          TotalStudents: {
+            $sum: '$occupiedSeats'
+          },
+          totalStudentIntake: {
+            $sum: '$TotalSeats'
+          },
+          Branches: {
+            $push: {
+              deptName: '$initial',
+              totalStudents: '$occupiedSeats',
+              TotalStudentIntake: '$TotalSeats',
+              availableIntake: '$availableIntake'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          batch: '$_id',
+          TotalStudents: 1,
+          totalStudentIntake: 1,
+          availableIntake: {
+            $subtract: ['$totalStudentIntake', '$TotalStudents']
+          },
+          Branch: {
+            $map: {
+              input: '$Branches',
+              as: 'branch',
+              in: {
+                k: '$$branch.deptName',
+                v: {
+                  totalStudents: '$$branch.totalStudents',
+                  TotalStudentIntake: '$$branch.TotalStudentIntake',
+                  availableIntake: '$$branch.availableIntake'
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          batch: 1,
+          TotalStudents: 1,
+          totalStudentIntake: 1,
+          availableIntake: 1,
+          Branch: {
+            $arrayToObject: '$Branch'
+          }
+        }
+      }
+    ];
+
+    if (reqObj.batch) {
+      const condition = {
+        $match: {
+          batch: reqObj.batch
+        }
+      };
+      pipeline.unshift(condition);
+    }
+    if (reqObj.branch) {
+      const condition = {
+        $match: {
+          initial: reqObj.branch
+        }
+      };
+      pipeline.unshift(condition);
+    }
+    return await Department.aggregate(pipeline);
+  } catch (error) {
+    logger.error(`Error while fourth pipeline execution in department - ${error}`);
+    throw newError(500, error);
+  }
+};
