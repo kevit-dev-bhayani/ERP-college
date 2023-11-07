@@ -6,4 +6,5 @@ import {router as departmentRouter} from './modules/department/department.routes
 import {router as attendanceRouter} from './modules/attendance/attendance.routes';
 
 const app = new App([pingPongRouter, userRouter, studentRouter, departmentRouter, attendanceRouter]);
-app.listen();
+// app.listen();
+export {app};
