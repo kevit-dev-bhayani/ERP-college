@@ -178,6 +178,11 @@ export const findAbStudent = async (reqObj: {[index: string]: any}) => {
   }
 };
 
+/**
+ * third aggregation
+ * @param reqObj => object pass in req.body
+ * @returns object[]
+ */
 export const thirdAgg = async (reqObj: {[index: string]: any}) => {
   try {
     const pipeline: any = [
