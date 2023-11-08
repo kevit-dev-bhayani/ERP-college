@@ -3,8 +3,6 @@ import {app} from '../src/index';
 import mongoose from "mongoose";
 import dbObj from './db/db'
 
-beforeEach(dbObj.setupDatabase)
-
 
 // describe("add department", ()=>{
 //     test('should add department to authorized user',async ()=>{

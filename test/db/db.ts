@@ -82,14 +82,14 @@ const admin = {
 }
 
 const setupDatabase = async () => {
-    // await Student.deleteMany();
-    // await User.deleteMany();
-    // await Department.deleteMany();
-    // await new Department(departmentOne).save();
-    // await new User(staffOne).save();
-    // await new User(admin).save();
-    // await new Student(studentOne).save();
-    // await new Student(studentTwo).save();
+    await Student.deleteMany();
+    await User.deleteMany();
+    await Department.deleteMany();
+    await new Department(departmentOne).save();
+    await new User(staffOne).save();
+    await new User(admin).save();
+    await new Student(studentOne).save();
+    await new Student(studentTwo).save();
 };
 
 export default {
