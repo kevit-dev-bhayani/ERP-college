@@ -3,7 +3,6 @@ import {IDepartment} from '../../interfaces';
 import {logger} from '../../utils/logger';
 import {newError} from '../../utils/error';
 import {ObjectId} from 'mongoose';
-
 /**
  * Find department by Id
  * @param _id => id of department to be found
@@ -23,9 +22,11 @@ export const findById = async (_id: string): Promise<IDepartment> => {
  * @param _id => id of department to be found
  * @returns  => Promise<IDepartment>
  */
-export const findByDeptInit = async (initial: string): Promise<IDepartment> => {
+export const findByDeptId = async (_id: string): Promise<IDepartment> => {
   try {
-    return await Department.findOne({initial});
+    // _id = _id.toString();
+    // console.log("Hello");
+    return await Department.findById(_id);
   } catch (error) {
     logger.error(`Error occurred while find department by Id`);
     throw newError(500, error);

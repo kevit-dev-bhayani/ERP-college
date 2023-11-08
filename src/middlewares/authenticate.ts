@@ -15,13 +15,13 @@ import {logger} from '../utils/logger';
  */
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
-  if (!token) {
-    throw 'UNAUTHENTICATED';
-  }
   try {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    if (!token) {
+      throw 'UNAUTHENTICATED';
+    }
     const privateKey = fs.readFileSync(join(__dirname, '../../keys/private.key'));
-    const {_id, role} = jwt.verify(token, privateKey);
+    const {_id, role} = await jwt.verify(token, privateKey);
     const person = role === 'STUDENT' ? await findStudentById(_id) : await findUserById(_id);
     if (token !== person.authToken) {
       throw 'UNAUTHENTICATED';
