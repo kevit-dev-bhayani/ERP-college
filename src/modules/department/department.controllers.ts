@@ -3,7 +3,7 @@ import {
   findDepartments,
   createDepartment,
   findById,
-  findByDeptInit,
+  findByDeptId,
   deleteById,
   firstAgg,
   fourthAgg
@@ -70,15 +70,16 @@ export const findDepartmentById = async (req: Request, res: Response, next: Next
  */
 export const updateById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const department = await findByDeptInit(req.params.id);
-    logger.info(req.body);
+    const department = await findById(req.params.id);
+    // logger.info(req.body);
+
     for (const property in req.body) {
       department[property] = req.body[property];
     }
     await department.save();
     return res.status(200).json({success: true, data: department});
   } catch (error) {
-    logger.error(`Error while finding department by id - ${error}`);
+    logger.error(`Error while finding and updating department by id - ${error}`);
     next(error);
   }
 };
